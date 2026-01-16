@@ -37,30 +37,30 @@ export default function AppointmentsPage() {
     else await api.post("/appointments", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Record?")) { await api.delete(`/appointments/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bản Ghi Này?")) { await api.delete(`/appointments/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (a: Appointment & { employeeName?: string }) => a.employeeName || "-" },
-    { key: "positionId", header: "Position", render: (a: Appointment) => positions.find(p => p.id === a.positionId)?.name || "-" },
-    { key: "decisionNumber", header: "Decision No." },
-    { key: "decisionDate", header: "Decision Date", render: (a: Appointment) => formatDate(a.decisionDate) },
-    { key: "effectiveDate", header: "Effective Date", render: (a: Appointment) => formatDate(a.effectiveDate) },
+    { key: "employeeName", header: "Nhân Viên", render: (a: Appointment & { employeeName?: string }) => a.employeeName || "-" },
+    { key: "positionId", header: "Vị Trí", render: (a: Appointment) => positions.find(p => p.id === a.positionId)?.name || "-" },
+    { key: "decisionNumber", header: "Số Quyết Định" },
+    { key: "decisionDate", header: "Ngày Quyết Định", render: (a: Appointment) => formatDate(a.decisionDate) },
+    { key: "effectiveDate", header: "Ngày Hiệu Lực", render: (a: Appointment) => formatDate(a.effectiveDate) },
   ]
   return (
     <><Navbar /><main className="pt-24 px-4 lg:px-8 pb-8"><div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Appointments</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Position Appointments</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", positionId: "", decisionNumber: "", decisionDate: "", effectiveDate: "", notes: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Appointment</Button></div>
+      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Bổ Nhiệm</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quyết Định Bổ Nhiệm Vị Trí</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", positionId: "", decisionNumber: "", decisionDate: "", effectiveDate: "", notes: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Quyết Định</Button></div>
       <Card><CardContent className="p-6"><DataTable columns={columns} data={appointments} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} actions={(a) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(a); setFormData({ employeeId: String(a.employeeId), positionId: String(a.positionId), decisionNumber: a.decisionNumber, decisionDate: a.decisionDate, effectiveDate: a.effectiveDate, notes: a.notes }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(a.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} /></CardContent></Card>
     </div></main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Appointment" : "Add Appointment"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Quyết Định" : "Thêm Quyết Định"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Select label="Position" value={formData.positionId} onChange={(e) => setFormData({ ...formData, positionId: e.target.value })} options={[{ value: "", label: "Select Position" }, ...positions.map(p => ({ value: p.id, label: p.name }))]} required />
-          <Input label="Decision Number" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Vị Trí" value={formData.positionId} onChange={(e) => setFormData({ ...formData, positionId: e.target.value })} options={[{ value: "", label: "Chọn Vị Trí" }, ...positions.map(p => ({ value: p.id, label: p.name }))]} required />
+          <Input label="Số Quyết Định" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Decision Date" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
-            <Input label="Effective Date" type="date" value={formData.effectiveDate} onChange={(e) => setFormData({ ...formData, effectiveDate: e.target.value })} required />
+            <Input label="Ngày Quyết Định" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
+            <Input label="Ngày Hiệu Lực" type="date" value={formData.effectiveDate} onChange={(e) => setFormData({ ...formData, effectiveDate: e.target.value })} required />
           </div>
-          <Textarea label="Notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Textarea label="Ghi Chú" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal></>
   )

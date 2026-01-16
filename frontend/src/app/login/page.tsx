@@ -20,7 +20,7 @@ export default function LoginPage() {
       await login(username, password)
       router.push("/dashboard")
     } catch (err: any) {
-      setError(err.message || "Login Failed!")
+      setError(err.message || "Đăng Nhập Thất Bại!")
     } finally {
       setLoading(false)
     }
@@ -43,8 +43,8 @@ export default function LoginPage() {
           <div className="hidden lg:block mb-6">
             <Building2 className={`w-8 h-8 ${isDark ? "text-white" : "text-black"}`} strokeWidth={1.5} />
           </div>
-          <h1 className={`text-3xl font-bold mb-1 ${isDark ? "text-white" : "text-black"}`}>Welcome Back</h1>
-          <p className={`text-base mb-8 ${isDark ? "text-slate-400" : "text-slate-600"}`}>Sign In To HRMS</p>
+          <h1 className={`text-3xl font-bold mb-1 ${isDark ? "text-white" : "text-black"}`}>Chào Mừng Trở Lại</h1>
+          <p className={`text-base mb-8 ${isDark ? "text-slate-400" : "text-slate-600"}`}>Đăng Nhập Vào HRMS</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="p-3 border border-red-500 rounded text-red-500 text-sm">{error}</div>}
             <div>
@@ -52,7 +52,7 @@ export default function LoginPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
+                placeholder="Tên Đăng Nhập"
                 required
                 autoFocus
                 className={`w-full px-4 py-3 text-sm border rounded transition-colors focus:outline-none focus:ring-1 ${isDark ? "bg-black border-slate-700 text-white placeholder-slate-500 focus:border-slate-500 focus:ring-slate-500/20" : "bg-white border-slate-300 text-black placeholder-slate-400 focus:border-slate-400 focus:ring-slate-400/20"}`}
@@ -63,7 +63,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder="Mật Khẩu"
                 required
                 className={`w-full px-4 py-3 text-sm border rounded transition-colors focus:outline-none focus:ring-1 ${isDark ? "bg-black border-slate-700 text-white placeholder-slate-500 focus:border-slate-500 focus:ring-slate-500/20" : "bg-white border-slate-300 text-black placeholder-slate-400 focus:border-slate-400 focus:ring-slate-400/20"}`}
               />
@@ -73,13 +73,13 @@ export default function LoginPage() {
               disabled={loading}
               className={`w-full py-3 text-sm font-medium rounded cursor-pointer transition-colors disabled:opacity-50 ${isDark ? "bg-white text-black hover:bg-slate-200" : "bg-black text-white hover:bg-slate-800"}`}
             >
-              {loading ? "Signing In..." : "Sign In"}
+              {loading ? "Đang Đăng Nhập..." : "Đăng Nhập"}
             </button>
             <button
               type="button"
               className={`w-full py-3 text-sm font-medium rounded border cursor-pointer transition-colors ${isDark ? "border-slate-700 text-white hover:bg-slate-900" : "border-slate-300 text-black hover:bg-slate-50"}`}
             >
-              Forgot Password?
+              Quên Mật Khẩu?
             </button>
           </form>
         </div>

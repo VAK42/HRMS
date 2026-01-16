@@ -15,7 +15,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
         className={`px-3 py-2 border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isDark ? "border-white text-white hover:bg-white hover:text-black" : "border-black text-black hover:bg-black hover:text-white"}`}
-        aria-label="First Page"
+        aria-label="Trang Đầu"
       >
         <ChevronsLeft className="w-4 h-4" />
       </button>
@@ -23,7 +23,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className={`px-3 py-2 border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isDark ? "border-white text-white hover:bg-white hover:text-black" : "border-black text-black hover:bg-black hover:text-white"}`}
-        aria-label="Previous Page"
+        aria-label="Trang Trước"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -58,7 +58,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className={`px-3 py-2 border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isDark ? "border-white text-white hover:bg-white hover:text-black" : "border-black text-black hover:bg-black hover:text-white"}`}
-        aria-label="Next Page"
+        aria-label="Trang Sau"
       >
         <ChevronRight className="w-4 h-4" />
       </button>
@@ -66,7 +66,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
         className={`px-3 py-2 border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isDark ? "border-white text-white hover:bg-white hover:text-black" : "border-black text-black hover:bg-black hover:text-white"}`}
-        aria-label="Last Page"
+        aria-label="Trang Cuối"
       >
         <ChevronsRight className="w-4 h-4" />
       </button>

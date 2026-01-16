@@ -84,7 +84,7 @@ const createCrudRoutes = (tableName: string, idField = 'id') => {
       }
       const stmt = db.prepare(`SELECT ${selectClause} FROM ${fromClause} WHERE t.${idField} = ?`)
       const row = stmt.get(req.params.id)
-      if (!row) return res.status(404).json({ error: 'Not Found' })
+      if (!row) return res.status(404).json({ error: 'Không Tìm Thấy' })
       res.json(row)
     } catch (error: any) {
       res.status(500).json({ error: error.message })
@@ -117,7 +117,7 @@ const createCrudRoutes = (tableName: string, idField = 'id') => {
     try {
       const stmt = db.prepare(`DELETE FROM ${tableName} WHERE ${idField} = ?`)
       stmt.run(req.params.id)
-      res.json({ message: 'Deleted Successfully' })
+      res.json({ message: 'Xóa Thành Công' })
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -157,7 +157,7 @@ app.post('/api/auth/login', (req, res) => {
   try {
     const { username, password } = req.body
     const user = db.prepare('SELECT u.*, r.name as roleName, r.permissions, e.fullName FROM users u LEFT JOIN systemRoles r ON u.roleId = r.id LEFT JOIN employees e ON u.employeeId = e.id WHERE u.username = ? AND u.password = ? AND u.isActive = 1').get(username, password) as any
-    if (!user) return res.status(401).json({ error: 'Invalid Credentials' })
+    if (!user) return res.status(401).json({ error: 'Thông Tin Đăng Nhập Không Hợp Lệ' })
     const token = Buffer.from(`${user.id}:${Date.now()}`).toString('base64')
     const expiresAt = Date.now() + 24 * 60 * 60 * 1000
     db.prepare('INSERT INTO sessions (userId, token, expiresAt) VALUES (?, ?, ?)').run(user.id, token, expiresAt)
@@ -170,7 +170,7 @@ app.post('/api/auth/logout', (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '')
     if (token) db.prepare('DELETE FROM sessions WHERE token = ?').run(token)
-    res.json({ message: 'Logged Out Successfully' })
+    res.json({ message: 'Đăng Xuất Thành Công' })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
   }
@@ -178,9 +178,9 @@ app.post('/api/auth/logout', (req, res) => {
 app.get('/api/auth/me', (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) return res.status(401).json({ error: 'No Token Provided' })
+    if (!token) return res.status(401).json({ error: 'Chưa Cung Cấp Token' })
     const session = db.prepare('SELECT * FROM sessions WHERE token = ? AND expiresAt > ?').get(token, Date.now()) as any
-    if (!session) return res.status(401).json({ error: 'Invalid Or Expired Token' })
+    if (!session) return res.status(401).json({ error: 'Token Không Hợp Lệ Hoặc Đã Hết Hạn' })
     const user = db.prepare('SELECT u.*, r.name as roleName, r.permissions, e.fullName FROM users u LEFT JOIN systemRoles r ON u.roleId = r.id LEFT JOIN employees e ON u.employeeId = e.id WHERE u.id = ?').get(session.userId) as any
     res.json({ id: user.id, username: user.username, fullName: user.fullName || 'Lan Nhi', role: user.roleName, permissions: user.permissions })
   } catch (error: any) {
@@ -189,15 +189,15 @@ app.get('/api/auth/me', (req, res) => {
 })
 app.get('/api/dashboard/stats', (req, res) => {
   try {
-    const totalEmployees = (db.prepare("SELECT COUNT(*) as count FROM employees WHERE status = 'active'").get() as any).count
+    const totalEmployees = (db.prepare("SELECT COUNT(*) as count FROM employees WHERE status = 'Hoạt Động'").get() as any).count
     const totalDepartments = (db.prepare('SELECT COUNT(*) as count FROM departments').get() as any).count
-    const pendingLeaves = (db.prepare("SELECT COUNT(*) as count FROM leaveRequests WHERE status = 'pending'").get() as any).count
-    const activeContracts = (db.prepare("SELECT COUNT(*) as count FROM contracts WHERE status = 'active'").get() as any).count
+    const pendingLeaves = (db.prepare("SELECT COUNT(*) as count FROM leaveRequests WHERE status = 'Chờ Duyệt'").get() as any).count
+    const activeContracts = (db.prepare("SELECT COUNT(*) as count FROM contracts WHERE status = 'Hoạt Động'").get() as any).count
     const departmentStats = db.prepare(`
         SELECT d.name, COUNT(e.id) as employeeCount, COALESCE(AVG(c.baseSalary), 0) as avgSalary 
         FROM departments d 
         LEFT JOIN employees e ON d.id = e.departmentId 
-        LEFT JOIN contracts c ON e.id = c.employeeId AND c.status = 'active'
+        LEFT JOIN contracts c ON e.id = c.employeeId AND c.status = 'Hoạt Động'
         GROUP BY d.id
     `).all()
     const monthlyHiresRaw = db.prepare("SELECT strftime('%m', startDate) as month, COUNT(*) as count FROM employees WHERE strftime('%Y', startDate) = strftime('%Y', 'now') GROUP BY month").all() as any[]
@@ -221,18 +221,18 @@ app.get('/api/dashboard/stats', (req, res) => {
         LEFT JOIN departments d ON e.departmentId = d.id 
         ORDER BY k.actualScore DESC LIMIT 5
     `).all()
-    const employeesLocations = db.prepare("SELECT address FROM employees WHERE status='active'").all() as any[]
+    const employeesLocations = db.prepare("SELECT address FROM employees WHERE status='Hoạt Động'").all() as any[]
     const locMap: Record<string, number> = {}
     employeesLocations.forEach(e => {
       const parts = e.address ? e.address.split(',') : []
-      const city = parts.length > 0 ? parts[parts.length - 1].trim() : 'Unknown'
+      const city = parts.length > 0 ? parts[parts.length - 1].trim() : 'Không Xác Định'
       locMap[city] = (locMap[city] || 0) + 1
     })
-    const officeLocations = Object.entries(locMap).map(([city, count]) => ({ city, employees: count, status: 'active' })).slice(0, 5)
+    const officeLocations = Object.entries(locMap).map(([city, count]) => ({ city, employees: count, status: 'Hoạt Động' })).slice(0, 5)
     const upcomingEvents = db.prepare(`
-        SELECT title, startDate as date, 'meeting' as type FROM scheduleEvents WHERE startDate >= date('now')
+        SELECT title, startDate as date, 'Cuộc Họp' as type FROM scheduleEvents WHERE startDate >= date('now')
         UNION ALL
-        SELECT name as title, startDate as date, 'training' as type FROM trainingCourses WHERE startDate >= date('now')
+        SELECT name as title, startDate as date, 'Đào Tạo' as type FROM trainingCourses WHERE startDate >= date('now')
         ORDER BY date ASC LIMIT 5
     `).all()
     const recentHires = db.prepare(`
@@ -241,8 +241,8 @@ app.get('/api/dashboard/stats', (req, res) => {
         LEFT JOIN positions p ON e.positionId = p.id 
         ORDER BY e.startDate DESC LIMIT 5
     `).all()
-    const recentActivities = db.prepare(`SELECT 'New Hire' as action, fullName as user, createdAt as time FROM employees ORDER BY createdAt DESC LIMIT 5`).all()
-    const recentLeavesApproved = db.prepare("SELECT 'Leave Approved' as action, e.fullName as user, lr.createdAt as time FROM leaveRequests lr JOIN employees e ON lr.employeeId = e.id WHERE lr.status = 'approved' ORDER BY lr.createdAt DESC LIMIT 5").all()
+    const recentActivities = db.prepare(`SELECT 'Nhân Viên Mới' as action, fullName as user, createdAt as time FROM employees ORDER BY createdAt DESC LIMIT 5`).all()
+    const recentLeavesApproved = db.prepare("SELECT 'Nghỉ Phép Đã Duyệt' as action, e.fullName as user, lr.createdAt as time FROM leaveRequests lr JOIN employees e ON lr.employeeId = e.id WHERE lr.status = 'Đã Duyệt' ORDER BY lr.createdAt DESC LIMIT 5").all()
     const combinedActivities = [...recentActivities, ...recentLeavesApproved].sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5)
     const skillsDistribution = db.prepare(`SELECT major as skill, COUNT(*) as count FROM degrees GROUP BY major ORDER BY count DESC LIMIT 5`).all()
     const recentLeaves = db.prepare('SELECT lr.*, e.fullName FROM leaveRequests lr JOIN employees e ON lr.employeeId = e.id ORDER BY lr.createdAt DESC LIMIT 5').all()
@@ -262,7 +262,7 @@ app.get('/api/reports/employees', (req, res) => {
       FROM employees e
       LEFT JOIN departments d ON e.departmentId = d.id
       LEFT JOIN positions p ON e.positionId = p.id
-      LEFT JOIN contracts c ON e.id = c.employeeId AND c.status = 'active'
+      LEFT JOIN contracts c ON e.id = c.employeeId AND c.status = 'Hoạt Động'
       ORDER BY e.id
     `).all()
     res.json(employees)
@@ -277,7 +277,7 @@ app.get('/api/orgChart', (req, res) => {
       FROM employees e
       LEFT JOIN positions p ON e.positionId = p.id
       LEFT JOIN departments d ON e.departmentId = d.id
-      WHERE e.status = 'active'
+      WHERE e.status = 'Hoạt Động'
     `).all()
     res.json(employees)
   } catch (error: any) {
@@ -300,18 +300,18 @@ app.get('/api/workSchedule', (req, res) => {
 })
 app.get('/api/safety/stats', (req, res) => {
   try {
-    const totalEmployees = (db.prepare("SELECT COUNT(*) as count FROM employees WHERE status = 'active'").get() as any).count
-    const equipmentIssued = (db.prepare("SELECT COUNT(*) as count FROM safetyEquipment WHERE status = 'active'").get() as any).count
+    const totalEmployees = (db.prepare("SELECT COUNT(*) as count FROM employees WHERE status = 'Hoạt Động'").get() as any).count
+    const equipmentIssued = (db.prepare("SELECT COUNT(*) as count FROM safetyEquipment WHERE status = 'Hoạt Động'").get() as any).count
     const incidentsCount = (db.prepare("SELECT COUNT(*) as count FROM safetyIncidents").get() as any).count
-    const employeesWithEquipment = (db.prepare("SELECT COUNT(DISTINCT employeeId) as count FROM safetyEquipment WHERE status = 'active'").get() as any).count
+    const employeesWithEquipment = (db.prepare("SELECT COUNT(DISTINCT employeeId) as count FROM safetyEquipment WHERE status = 'Hoạt Động'").get() as any).count
     const compliance = totalEmployees > 0 ? Math.round((employeesWithEquipment / totalEmployees) * 100) : 100
     const incidents = db.prepare("SELECT severity FROM safetyIncidents").all() as any[]
     let penalty = 0
     incidents.forEach(inc => {
-      if (inc.severity === 'Low') penalty += 2
-      else if (inc.severity === 'Medium') penalty += 5
-      else if (inc.severity === 'High') penalty += 10
-      else if (inc.severity === 'Critical') penalty += 20
+      if (inc.severity === 'Thấp') penalty += 2
+      else if (inc.severity === 'Trung Bình') penalty += 5
+      else if (inc.severity === 'Cao') penalty += 10
+      else if (inc.severity === 'Nghiêm Trọng') penalty += 20
     })
     const safetyScore = Math.max(0, 100 - penalty)
 
@@ -321,5 +321,5 @@ app.get('/api/safety/stats', (req, res) => {
   }
 })
 app.listen(PORT, () => {
-  console.log(`Server Running On http://localhost:${PORT}`)
+  console.log(`Máy Chủ Đang Chạy Tại http://localhost:${PORT}`)
 })

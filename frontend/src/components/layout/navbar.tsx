@@ -6,48 +6,48 @@ import { useTheme } from "@/lib/themeContext"
 import { useAuth } from "@/lib/authContext"
 import Link from "next/link"
 const menuItems = [
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "Bảng Điều Khiển", href: "/dashboard" },
   {
-    label: "Personnel", children: [
-      { label: "Employees", href: "/employees" },
-      { label: "Org Chart", href: "/orgChart" },
-      { label: "Degrees", href: "/degrees" },
-      { label: "Family", href: "/family" },
-      { label: "Contracts", href: "/contracts" },
-      { label: "Documents", href: "/documents" },
-      { label: "Health", href: "/health" },
+    label: "Nhân Sự", children: [
+      { label: "Nhân Viên", href: "/employees" },
+      { label: "Sơ Đồ Tổ Chức", href: "/orgChart" },
+      { label: "Bằng Cấp", href: "/degrees" },
+      { label: "Gia Đình", href: "/family" },
+      { label: "Hợp Đồng", href: "/contracts" },
+      { label: "Tài Liệu", href: "/documents" },
+      { label: "Sức Khỏe", href: "/health" },
     ]
   },
   {
-    label: "Decisions", children: [
-      { label: "Rewards", href: "/rewards" },
-      { label: "Discipline", href: "/discipline" },
-      { label: "Salary Adjust", href: "/salaryAdjust" },
-      { label: "Appointments", href: "/appointments" },
-      { label: "Transfers", href: "/transfers" },
-      { label: "Terminations", href: "/terminations" },
+    label: "Quyết Định", children: [
+      { label: "Khen Thưởng", href: "/rewards" },
+      { label: "Kỷ Luật", href: "/discipline" },
+      { label: "Điều Chỉnh Lương", href: "/salaryAdjust" },
+      { label: "Bổ Nhiệm", href: "/appointments" },
+      { label: "Thuyên Chuyển", href: "/transfers" },
+      { label: "Thôi Việc", href: "/terminations" },
     ]
   },
   {
-    label: "Leave", children: [
-      { label: "Leave Requests", href: "/leaveRequests" },
-      { label: "Work Schedule", href: "/workSchedule" },
-      { label: "Visits", href: "/visits" },
-      { label: "Foreign Exit", href: "/foreignExit" },
+    label: "Nghỉ Phép", children: [
+      { label: "Yêu Cầu Nghỉ Phép", href: "/leaveRequests" },
+      { label: "Lịch Làm Việc", href: "/workSchedule" },
+      { label: "Khách Đến Thăm", href: "/visits" },
+      { label: "Đi Nước Ngoài", href: "/foreignExit" },
     ]
   },
-  { label: "Recruitment", href: "/recruitment" },
-  { label: "Training", href: "/training" },
-  { label: "Salary", href: "/salary" },
+  { label: "Tuyển Dụng", href: "/recruitment" },
+  { label: "Đào Tạo", href: "/training" },
+  { label: "Lương", href: "/salary" },
   { label: "KPI", href: "/kpi" },
-  { label: "Reports", href: "/reports" },
+  { label: "Báo Cáo", href: "/reports" },
   {
-    label: "System", children: [
-      { label: "Catalog", href: "/catalog" },
-      { label: "Permissions", href: "/permissions" },
-      { label: "Config", href: "/config" },
-      { label: "Safety", href: "/safety" },
-      { label: "Social Insurance", href: "/socialInsurance" },
+    label: "Hệ Thống", children: [
+      { label: "Danh Mục", href: "/catalog" },
+      { label: "Phân Quyền", href: "/permissions" },
+      { label: "Cấu Hình", href: "/config" },
+      { label: "An Toàn", href: "/safety" },
+      { label: "Bảo Hiểm Xã Hội", href: "/socialInsurance" },
     ]
   },
 ]

@@ -62,7 +62,7 @@ export default function EmployeesPage() {
     }
   }
   const handleDelete = async (id: number) => {
-    if (confirm("Are You Sure You Want To Delete This Employee?")) {
+    if (confirm("Bạn Có Chắc Chắn Muốn Xóa Nhân Viên Này?")) {
       await api.delete(`/employees/${id}`)
       fetchEmployees()
     }
@@ -80,16 +80,16 @@ export default function EmployeesPage() {
     setModalOpen(true)
   }
   const columns = [
-    { key: "employeeCode", header: "Code", sortable: true },
-    { key: "fullName", header: "Full Name", sortable: true },
+    { key: "employeeCode", header: "Mã Nhân Viên", sortable: true },
+    { key: "fullName", header: "Họ Tên", sortable: true },
     { key: "email", header: "Email" },
-    { key: "phone", header: "Phone" },
-    { key: "departmentId", header: "Department", render: (emp: Employee) => departments.find(d => d.id === emp.departmentId)?.name || "-" },
-    { key: "positionId", header: "Position", render: (emp: Employee) => positions.find(p => p.id === emp.positionId)?.name || "-" },
-    { key: "startDate", header: "Start Date", render: (emp: Employee) => formatDate(emp.startDate) },
+    { key: "phone", header: "SĐT" },
+    { key: "departmentId", header: "Phòng Ban", render: (emp: Employee) => departments.find(d => d.id === emp.departmentId)?.name || "-" },
+    { key: "positionId", header: "Vị Trí", render: (emp: Employee) => positions.find(p => p.id === emp.positionId)?.name || "-" },
+    { key: "startDate", header: "Ngày Bắt Đầu", render: (emp: Employee) => formatDate(emp.startDate) },
     {
-      key: "status", header: "Status", render: (emp: Employee) => (
-        <Badge variant={emp.status === "active" ? "success" : "danger"}>{emp.status === "active" ? "Active" : "Inactive"}</Badge>
+      key: "status", header: "Trạng Thái", render: (emp: Employee) => (
+        <Badge variant={emp.status === "active" ? "success" : "danger"}>{emp.status === "active" ? "Hoạt Động" : "Ngừng HĐ"}</Badge>
       )
     },
   ]
@@ -100,11 +100,11 @@ export default function EmployeesPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Employees</h1>
-              <p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Manage All Employee Records</p>
+              <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Nhân Viên</h1>
+              <p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quản Lý Hồ Sơ Nhân Viên</p>
             </div>
             <Button variant="dark" onClick={() => { resetForm(); setEditingEmployee(null); setModalOpen(true) }}>
-              <Plus className="w-4 h-4" /> Add Employee
+              <Plus className="w-4 h-4" /> Thêm Nhân Viên
             </Button>
           </div>
           <Card>
@@ -117,7 +117,7 @@ export default function EmployeesPage() {
                 pageSize={10}
                 onPageChange={setPage}
                 onSearch={setSearch}
-                searchPlaceholder="Search Employees..."
+                searchPlaceholder="Tìm Kiếm Nhân Viên..."
                 loading={loading}
                 actions={(emp) => (
                   <>
@@ -130,25 +130,25 @@ export default function EmployeesPage() {
           </Card>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingEmployee ? "Edit Employee" : "Add Employee"} size="lg">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingEmployee ? "Sửa Nhân Viên" : "Thêm Nhân Viên"} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="Employee Code" value={formData.employeeCode} onChange={(e) => setFormData({ ...formData, employeeCode: e.target.value })} required />
-            <Input label="Full Name" value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required />
+            <Input label="Mã Nhân Viên" value={formData.employeeCode} onChange={(e) => setFormData({ ...formData, employeeCode: e.target.value })} required />
+            <Input label="Họ Tên" value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required />
             <Input label="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
-            <Input label="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
-            <Input label="Birthday" type="date" value={formData.birthday} onChange={(e) => setFormData({ ...formData, birthday: e.target.value })} required />
-            <Select label="Gender" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} options={[{ value: "", label: "Select Gender" }, { value: "Male", label: "Male" }, { value: "Female", label: "Female" }]} required />
-            <Input label="ID Number" value={formData.idNumber} onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })} required />
-            <Input label="Start Date" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
-            <Select label="Department" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} options={[{ value: "", label: "Select Department" }, ...departments.map(d => ({ value: d.id, label: d.name }))]} required />
-            <Select label="Position" value={formData.positionId} onChange={(e) => setFormData({ ...formData, positionId: e.target.value })} options={[{ value: "", label: "Select Position" }, ...positions.map(p => ({ value: p.id, label: p.name }))]} required />
-            <Select label="Status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} required />
+            <Input label="SĐT" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
+            <Input label="Ngày Sinh" type="date" value={formData.birthday} onChange={(e) => setFormData({ ...formData, birthday: e.target.value })} required />
+            <Select label="Giới Tính" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} options={[{ value: "", label: "Chọn Giới Tính" }, { value: "Male", label: "Nam" }, { value: "Female", label: "Nữ" }]} required />
+            <Input label="CCCD/CMND" value={formData.idNumber} onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })} required />
+            <Input label="Ngày Bắt Đầu" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
+            <Select label="Phòng Ban" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} options={[{ value: "", label: "Chọn Phòng Ban" }, ...departments.map(d => ({ value: d.id, label: d.name }))]} required />
+            <Select label="Vị Trí" value={formData.positionId} onChange={(e) => setFormData({ ...formData, positionId: e.target.value })} options={[{ value: "", label: "Chọn Vị Trí" }, ...positions.map(p => ({ value: p.id, label: p.name }))]} required />
+            <Select label="Trạng Thái" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "active", label: "Hoạt Động" }, { value: "inactive", label: "Ngừng HĐ" }]} required />
           </div>
-          <Textarea label="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
+          <Textarea label="Địa Chỉ" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button type="submit">{editingEmployee ? "Update" : "Create"}</Button>
+            <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button>
+            <Button type="submit">{editingEmployee ? "Cập Nhật" : "Tạo Mới"}</Button>
           </div>
         </form>
       </Modal>

@@ -8,7 +8,7 @@ import { Shield, Check } from "lucide-react"
 import { useEffect, useState } from "react"
 interface Role { id: number; name: string; permissions: string }
 interface Department { id: number; name: string }
-const modules = ["Dashboard", "Personnel", "Decisions", "Leave", "Recruitment", "Salary", "Reports", "System"]
+const modules = ["Bảng Điều Khiển", "Nhân Sự", "Quyết Định", "Nghỉ Phép", "Tuyển Dụng", "Lương", "Báo Cáo", "Hệ Thống"]
 export default function PermissionsPage() {
   const { isDark } = useTheme()
   const [roles, setRoles] = useState<Role[]>([])
@@ -61,7 +61,7 @@ export default function PermissionsPage() {
           <Card key={dept.id} hover className="p-4">
             <div className="flex items-center justify-between">
               <span className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{dept.name}</span>
-              <span className="text-sm text-green-950 dark:text-green-400">Full Access</span>
+              <span className="text-sm text-green-950 dark:text-green-400">Toàn Quyền</span>
             </div>
           </Card>
         ))
@@ -73,11 +73,11 @@ export default function PermissionsPage() {
       <Navbar />
       <main className="pt-24 px-4 lg:px-8 pb-8">
         <div className="max-w-4xl mx-auto space-y-6">
-          <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Permissions</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Manage System Access Control</p></div>
+          <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Phân Quyền</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quản Lý Kiểm Soát Truy Cập</p></div>
           <Tabs
             tabs={[
-              { id: "role", label: "By Role", content: <ByRoleContent /> },
-              { id: "dept", label: "By Department", content: <ByDeptContent /> },
+              { id: "role", label: "Theo Vai Trò", content: <ByRoleContent /> },
+              { id: "dept", label: "Theo Phòng Ban", content: <ByDeptContent /> },
             ]}
           />
         </div>

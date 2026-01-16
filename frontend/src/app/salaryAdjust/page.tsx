@@ -36,34 +36,34 @@ export default function SalaryAdjustPage() {
     else await api.post("/salaryAdjustments", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Record?")) { await api.delete(`/salaryAdjustments/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bản Ghi Này?")) { await api.delete(`/salaryAdjustments/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (s: SalaryAdjust & { employeeName?: string }) => s.employeeName || "-" },
-    { key: "adjustType", header: "Type" },
-    { key: "decisionNumber", header: "Decision No." },
-    { key: "decisionDate", header: "Date", render: (s: SalaryAdjust) => formatDate(s.decisionDate) },
-    { key: "oldSalary", header: "Old Salary", render: (s: SalaryAdjust) => formatCurrency(s.oldSalary) },
-    { key: "newSalary", header: "New Salary", render: (s: SalaryAdjust) => <span className="text-green-400 font-medium">{formatCurrency(s.newSalary)}</span> },
+    { key: "employeeName", header: "Nhân Viên", render: (s: SalaryAdjust & { employeeName?: string }) => s.employeeName || "-" },
+    { key: "adjustType", header: "Loại" },
+    { key: "decisionNumber", header: "Số Quyết Định" },
+    { key: "decisionDate", header: "Ngày", render: (s: SalaryAdjust) => formatDate(s.decisionDate) },
+    { key: "oldSalary", header: "Lương Cũ", render: (s: SalaryAdjust) => formatCurrency(s.oldSalary) },
+    { key: "newSalary", header: "Lương Mới", render: (s: SalaryAdjust) => <span className="text-green-400 font-medium">{formatCurrency(s.newSalary)}</span> },
   ]
   return (
     <><Navbar /><main className="pt-24 px-4 lg:px-8 pb-8"><div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Salary Adjustments</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Manage Salary Changes</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", adjustType: "", decisionNumber: "", decisionDate: "", oldSalary: "", newSalary: "", reason: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Adjustment</Button></div>
+      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Điều Chỉnh Lương</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quản Lý Thay Đổi Lương</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", adjustType: "", decisionNumber: "", decisionDate: "", oldSalary: "", newSalary: "", reason: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Điều Chỉnh</Button></div>
       <Card><CardContent className="p-6"><DataTable columns={columns} data={adjustments} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} actions={(s) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(s); setFormData({ employeeId: String(s.employeeId), adjustType: s.adjustType, decisionNumber: s.decisionNumber, decisionDate: s.decisionDate, oldSalary: String(s.oldSalary), newSalary: String(s.newSalary), reason: s.reason }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(s.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} /></CardContent></Card>
     </div></main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Adjustment" : "Add Adjustment"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Điều Chỉnh" : "Thêm Điều Chỉnh"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Select label="Adjustment Type" value={formData.adjustType} onChange={(e) => setFormData({ ...formData, adjustType: e.target.value })} options={[{ value: "", label: "Select Type" }, { value: "Increase", label: "Increase" }, { value: "Decrease", label: "Decrease" }, { value: "Promotion", label: "Promotion" }]} required />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Loại Điều Chỉnh" value={formData.adjustType} onChange={(e) => setFormData({ ...formData, adjustType: e.target.value })} options={[{ value: "", label: "Chọn Loại" }, { value: "Increase", label: "Tăng Lương" }, { value: "Decrease", label: "Giảm Lương" }, { value: "Promotion", label: "Thăng Chức" }]} required />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Decision Number" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
-            <Input label="Decision Date" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
+            <Input label="Số Quyết Định" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
+            <Input label="Ngày Quyết Định" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Old Salary" type="number" value={formData.oldSalary} onChange={(e) => setFormData({ ...formData, oldSalary: e.target.value })} required />
-            <Input label="New Salary" type="number" value={formData.newSalary} onChange={(e) => setFormData({ ...formData, newSalary: e.target.value })} required />
+            <Input label="Lương Cũ" type="number" value={formData.oldSalary} onChange={(e) => setFormData({ ...formData, oldSalary: e.target.value })} required />
+            <Input label="Lương Mới" type="number" value={formData.newSalary} onChange={(e) => setFormData({ ...formData, newSalary: e.target.value })} required />
           </div>
-          <Textarea label="Reason" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Textarea label="Lý Do" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal></>
   )

@@ -13,8 +13,8 @@ const workSans = Work_Sans({
   weight: ["300", "400", "500", "600", "700"],
 })
 export const metadata: Metadata = {
-  title: "HRMS - Human Resource Management System",
-  description: "Modern HR Management System",
+  title: "HRMS - Hệ Thống Quản Lý Nhân Sự",
+  description: "Hệ Thống Quản Lý Nhân Sự Hiện Đại",
 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

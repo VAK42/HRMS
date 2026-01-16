@@ -42,21 +42,21 @@ export default function SalaryPage() {
     else await api.post("/salaryRecords", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Record?")) { await api.delete(`/salaryRecords/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bản Ghi Này?")) { await api.delete(`/salaryRecords/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (s: SalaryRecord & { employeeName?: string }) => s.employeeName || "-" },
-    { key: "month", header: "Period", render: (s: SalaryRecord) => `${s.month}/${s.year}` },
-    { key: "baseSalary", header: "Base Salary", render: (s: SalaryRecord) => formatCurrency(s.baseSalary) },
-    { key: "allowances", header: "Allowances", render: (s: SalaryRecord) => formatCurrency(s.allowances) },
-    { key: "bonuses", header: "Bonuses", render: (s: SalaryRecord) => formatCurrency(s.bonuses) },
-    { key: "deductions", header: "Deductions", render: (s: SalaryRecord) => formatCurrency(s.deductions) },
-    { key: "netSalary", header: "Net Salary", render: (s: SalaryRecord) => <span className="font-semibold text-green-400">{formatCurrency(s.netSalary)}</span> },
-    { key: "status", header: "Status", render: (s: SalaryRecord) => <Badge variant={s.status === "paid" ? "success" : s.status === "pending" ? "warning" : "info"}>{s.status === "paid" ? "Paid" : s.status === "pending" ? "Pending" : "Processing"}</Badge> },
+    { key: "employeeName", header: "Nhân Viên", render: (s: SalaryRecord & { employeeName?: string }) => s.employeeName || "-" },
+    { key: "month", header: "Kỳ Lương", render: (s: SalaryRecord) => `${s.month}/${s.year}` },
+    { key: "baseSalary", header: "Lương Cơ Bản", render: (s: SalaryRecord) => formatCurrency(s.baseSalary) },
+    { key: "allowances", header: "Phụ Cấp", render: (s: SalaryRecord) => formatCurrency(s.allowances) },
+    { key: "bonuses", header: "Thưởng", render: (s: SalaryRecord) => formatCurrency(s.bonuses) },
+    { key: "deductions", header: "Khấu Trừ", render: (s: SalaryRecord) => formatCurrency(s.deductions) },
+    { key: "netSalary", header: "Thực Lĩnh", render: (s: SalaryRecord) => <span className="font-semibold text-green-400">{formatCurrency(s.netSalary)}</span> },
+    { key: "status", header: "Trạng Thái", render: (s: SalaryRecord) => <Badge variant={s.status === "paid" ? "success" : s.status === "pending" ? "warning" : "info"}>{s.status === "paid" ? "Đã TT" : s.status === "pending" ? "Chờ Duyệt" : "Đang XL"}</Badge> },
   ]
-  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `Month ${i + 1}` }))
+  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `Tháng ${i + 1}` }))
   const years = Array.from({ length: 5 }, (_, i) => ({ value: new Date().getFullYear() - i, label: String(new Date().getFullYear() - i) }))
   const exportToCSV = () => {
-    const headers = "Employee,Period,Base Salary,Allowances,Bonuses,Deductions,Net Salary,Status"
+    const headers = "Nhân Viên,Kỳ Lương,Lương Cơ Bản,Phụ Cấp,Thưởng,Khấu Trừ,Thực Lĩnh,Trạng Thái"
     const rows = (salaries as (SalaryRecord & { employeeName?: string })[]).map(s =>
       `${s.employeeName || "-"},${s.month}/${s.year},${s.baseSalary},${s.allowances},${s.bonuses},${s.deductions},${s.netSalary},${s.status}`
     ).join("\n")
@@ -75,10 +75,10 @@ export default function SalaryPage() {
       <main className="pt-24 px-4 lg:px-8 pb-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
-            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Salary Management</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Manage Employee Payroll</p></div>
+            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Quản Lý Lương</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quản Lý Bảng Lương Nhân Viên</p></div>
             <div className="flex gap-2">
-              <Button variant="secondary" onClick={exportToCSV}><Download className="w-4 h-4" /> Export</Button>
-              <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", month: String(filterMonth), year: String(filterYear), baseSalary: "", allowances: "0", bonuses: "0", deductions: "0", netSalary: "", status: "pending" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Record</Button>
+              <Button variant="secondary" onClick={exportToCSV}><Download className="w-4 h-4" /> Xuất File</Button>
+              <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", month: String(filterMonth), year: String(filterYear), baseSalary: "", allowances: "0", bonuses: "0", deductions: "0", netSalary: "", status: "pending" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Bản Ghi</Button>
             </div>
           </div>
           <Card><CardContent className="p-6">
@@ -86,29 +86,29 @@ export default function SalaryPage() {
               <Select value={String(filterMonth)} onChange={(e) => setFilterMonth(Number(e.target.value))} options={months} className="w-40" />
               <Select value={String(filterYear)} onChange={(e) => setFilterYear(Number(e.target.value))} options={years} className="w-32" />
             </div>
-            <DataTable columns={columns} data={salaries} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} emptyMessage="No Salary Records For This Period"
+            <DataTable columns={columns} data={salaries} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} emptyMessage="Không Có Dữ Liệu Lương"
               actions={(s) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(s); setFormData({ employeeId: String(s.employeeId), month: String(s.month), year: String(s.year), baseSalary: String(s.baseSalary), allowances: String(s.allowances), bonuses: String(s.bonuses), deductions: String(s.deductions), netSalary: String(s.netSalary), status: s.status }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(s.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} />
           </CardContent></Card>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Salary Record" : "Add Salary Record"} size="lg">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Bản Ghi Lương" : "Thêm Bản Ghi Lương"} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
           <div className="grid grid-cols-2 gap-4">
-            <Select label="Month" value={formData.month} onChange={(e) => setFormData({ ...formData, month: e.target.value })} options={months} required />
-            <Select label="Year" value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} options={years} required />
+            <Select label="Tháng" value={formData.month} onChange={(e) => setFormData({ ...formData, month: e.target.value })} options={months} required />
+            <Select label="Năm" value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} options={years} required />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Base Salary" type="number" value={formData.baseSalary} onChange={(e) => setFormData({ ...formData, baseSalary: e.target.value })} required />
-            <Input label="Allowances" type="number" value={formData.allowances} onChange={(e) => setFormData({ ...formData, allowances: e.target.value })} />
+            <Input label="Lương Cơ Bản" type="number" value={formData.baseSalary} onChange={(e) => setFormData({ ...formData, baseSalary: e.target.value })} required />
+            <Input label="Phụ Cấp" type="number" value={formData.allowances} onChange={(e) => setFormData({ ...formData, allowances: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Bonuses" type="number" value={formData.bonuses} onChange={(e) => setFormData({ ...formData, bonuses: e.target.value })} />
-            <Input label="Deductions" type="number" value={formData.deductions} onChange={(e) => setFormData({ ...formData, deductions: e.target.value })} />
+            <Input label="Thưởng" type="number" value={formData.bonuses} onChange={(e) => setFormData({ ...formData, bonuses: e.target.value })} />
+            <Input label="Khấu Trừ" type="number" value={formData.deductions} onChange={(e) => setFormData({ ...formData, deductions: e.target.value })} />
           </div>
-          <Input label="Net Salary" type="number" value={formData.netSalary} onChange={(e) => setFormData({ ...formData, netSalary: e.target.value })} required />
-          <Select label="Status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "pending", label: "Pending" }, { value: "processing", label: "Processing" }, { value: "paid", label: "Paid" }]} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Input label="Thực Lĩnh" type="number" value={formData.netSalary} onChange={(e) => setFormData({ ...formData, netSalary: e.target.value })} required />
+          <Select label="Trạng Thái" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "pending", label: "Chờ Duyệt" }, { value: "processing", label: "Đang XL" }, { value: "paid", label: "Đã TT" }]} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal>
     </>

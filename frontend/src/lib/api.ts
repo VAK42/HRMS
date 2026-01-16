@@ -14,8 +14,8 @@ export async function fetchApi<T>(
     headers,
   })
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: "Request Failed" }))
-    throw new Error(error.error || "Request Failed")
+    const error = await res.json().catch(() => ({ error: "Yêu Cầu Thất Bại" }))
+    throw new Error(error.error || "Yêu Cầu Thất Bại")
   }
   return res.json()
 }
@@ -30,16 +30,16 @@ export const api = {
 }
 export function formatDate(date: string | null): string {
   if (!date) return "-"
-  return new Date(date).toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString("vi-VN", {
     year: "numeric",
-    month: "short",
-    day: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   })
 }
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("vi-VN", {
     style: "currency",
-    currency: "USD",
+    currency: "VND",
   }).format(amount)
 }
 export function cn(...classes: (string | undefined | null | false)[]): string {

@@ -39,14 +39,14 @@ export default function RewardsPage() {
     else await api.post("/rewards", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Reward?")) { await api.delete(`/rewards/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Khen Thưởng Này?")) { await api.delete(`/rewards/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (r: Reward & { employeeName?: string }) => r.employeeName || "-" },
-    { key: "rewardType", header: "Type" },
-    { key: "decisionNumber", header: "Decision No." },
-    { key: "decisionDate", header: "Date", render: (r: Reward) => formatDate(r.decisionDate) },
-    { key: "amount", header: "Amount", render: (r: Reward) => formatCurrency(r.amount) },
-    { key: "reason", header: "Reason" },
+    { key: "employeeName", header: "Nhân Viên", render: (r: Reward & { employeeName?: string }) => r.employeeName || "-" },
+    { key: "rewardType", header: "Loại" },
+    { key: "decisionNumber", header: "Số Quyết Định" },
+    { key: "decisionDate", header: "Ngày", render: (r: Reward) => formatDate(r.decisionDate) },
+    { key: "amount", header: "Số Tiền", render: (r: Reward) => formatCurrency(r.amount) },
+    { key: "reason", header: "Lý Do" },
   ]
   return (
     <div style={{ backgroundColor: isDark ? "#0a0f1a" : "#f8fafc", minHeight: "100vh" }}>
@@ -55,28 +55,28 @@ export default function RewardsPage() {
         <div className="w-full space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-lg font-semibold ${isDark ? "text-white" : "text-black"}`}>Rewards</h1>
-              <p className={`text-xs ${isDark ? "text-white" : "text-black"}`}>Manage Employee Rewards And Bonuses</p>
+              <h1 className={`text-lg font-semibold ${isDark ? "text-white" : "text-black"}`}>Khen Thưởng</h1>
+              <p className={`text-xs ${isDark ? "text-white" : "text-black"}`}>Quản Lý Khen Thưởng Và Tiền Thưởng</p>
             </div>
-            <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", rewardType: "", decisionNumber: "", decisionDate: "", amount: "", reason: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Reward</Button>
+            <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", rewardType: "", decisionNumber: "", decisionDate: "", amount: "", reason: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Khen Thưởng</Button>
           </div>
           <Card><CardContent className="p-4">
-            <DataTable columns={columns} data={rewards} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} onSearch={setSearch} searchPlaceholder="Search Rewards..." loading={loading}
+            <DataTable columns={columns} data={rewards} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} onSearch={setSearch} searchPlaceholder="Tìm Kiếm Khen Thưởng..." loading={loading}
               actions={(r) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(r); setFormData({ employeeId: String(r.employeeId), rewardType: r.rewardType, decisionNumber: r.decisionNumber, decisionDate: r.decisionDate, amount: String(r.amount), reason: r.reason }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(r.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} />
           </CardContent></Card>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Reward" : "Add Reward"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Khen Thưởng" : "Thêm Khen Thưởng"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Select label="Reward Type" value={formData.rewardType} onChange={(e) => setFormData({ ...formData, rewardType: e.target.value })} options={[{ value: "", label: "Select Type" }, { value: "Performance Bonus", label: "Performance Bonus" }, { value: "Project Completion", label: "Project Completion" }, { value: "Innovation Award", label: "Innovation Award" }, { value: "Employee Of Month", label: "Employee Of Month" }]} required />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Loại Khen Thưởng" value={formData.rewardType} onChange={(e) => setFormData({ ...formData, rewardType: e.target.value })} options={[{ value: "", label: "Chọn Loại" }, { value: "Performance Bonus", label: "Thưởng Hiệu Suất" }, { value: "Project Completion", label: "Hoàn Thành Dự Án" }, { value: "Innovation Award", label: "Giải Thưởng Sáng Tạo" }, { value: "Employee Of Month", label: "Nhân Viên Xuất Sắc Tháng" }]} required />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Decision Number" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
-            <Input label="Decision Date" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
+            <Input label="Số Quyết Định" value={formData.decisionNumber} onChange={(e) => setFormData({ ...formData, decisionNumber: e.target.value })} required />
+            <Input label="Ngày Quyết Định" type="date" value={formData.decisionDate} onChange={(e) => setFormData({ ...formData, decisionDate: e.target.value })} required />
           </div>
-          <Input label="Amount" type="number" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
-          <Textarea label="Reason" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Input label="Số Tiền" type="number" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
+          <Textarea label="Lý Do" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal>
     </div>

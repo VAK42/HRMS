@@ -37,31 +37,31 @@ export default function ForeignExitPage() {
     else await api.post("/foreignExits", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Record?")) { await api.delete(`/foreignExits/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bản Ghi Này?")) { await api.delete(`/foreignExits/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (e: ForeignExit & { employeeName?: string }) => e.employeeName || "-" },
-    { key: "destination", header: "Destination" },
-    { key: "purpose", header: "Purpose" },
-    { key: "departureDate", header: "Departure", render: (e: ForeignExit) => formatDate(e.departureDate) },
-    { key: "returnDate", header: "Return", render: (e: ForeignExit) => formatDate(e.returnDate) },
-    { key: "status", header: "Status", render: (e: ForeignExit) => <Badge variant={e.status === "approved" ? "success" : e.status === "pending" ? "warning" : "danger"}>{e.status}</Badge> },
+    { key: "employeeName", header: "Nhân Viên", render: (e: ForeignExit & { employeeName?: string }) => e.employeeName || "-" },
+    { key: "destination", header: "Điểm Đến" },
+    { key: "purpose", header: "Mục Đích" },
+    { key: "departureDate", header: "Ngày Đi", render: (e: ForeignExit) => formatDate(e.departureDate) },
+    { key: "returnDate", header: "Ngày Về", render: (e: ForeignExit) => formatDate(e.returnDate) },
+    { key: "status", header: "Trạng Thái", render: (e: ForeignExit) => <Badge variant={e.status === "approved" ? "success" : e.status === "pending" ? "warning" : "danger"}>{e.status === "approved" ? "Đã Duyệt" : e.status === "pending" ? "Chờ Duyệt" : "Từ Chối"}</Badge> },
   ]
   return (
     <><Navbar /><main className="pt-24 px-4 lg:px-8 pb-8"><div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Foreign Exit</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>International Travel Tracking</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", destination: "", purpose: "", departureDate: "", returnDate: "", status: "pending" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Record</Button></div>
+      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Xuất Cảnh</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Theo Dõi Xuất Nhập Cảnh</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", destination: "", purpose: "", departureDate: "", returnDate: "", status: "pending" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Bản Ghi</Button></div>
       <Card><CardContent className="p-6"><DataTable columns={columns} data={exits} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} actions={(e) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(e); setFormData({ employeeId: String(e.employeeId), destination: e.destination, purpose: e.purpose, departureDate: e.departureDate, returnDate: e.returnDate, status: e.status }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(e.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} /></CardContent></Card>
     </div></main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Record" : "Add Record"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Bản Ghi" : "Thêm Bản Ghi"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Input label="Destination" value={formData.destination} onChange={(e) => setFormData({ ...formData, destination: e.target.value })} required />
-          <Textarea label="Purpose" value={formData.purpose} onChange={(e) => setFormData({ ...formData, purpose: e.target.value })} />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Input label="Điểm Đến" value={formData.destination} onChange={(e) => setFormData({ ...formData, destination: e.target.value })} required />
+          <Textarea label="Mục Đích" value={formData.purpose} onChange={(e) => setFormData({ ...formData, purpose: e.target.value })} />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Departure Date" type="date" value={formData.departureDate} onChange={(e) => setFormData({ ...formData, departureDate: e.target.value })} required />
-            <Input label="Return Date" type="date" value={formData.returnDate} onChange={(e) => setFormData({ ...formData, returnDate: e.target.value })} required />
+            <Input label="Ngày Đi" type="date" value={formData.departureDate} onChange={(e) => setFormData({ ...formData, departureDate: e.target.value })} required />
+            <Input label="Ngày Về" type="date" value={formData.returnDate} onChange={(e) => setFormData({ ...formData, returnDate: e.target.value })} required />
           </div>
-          <Select label="Status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "pending", label: "Pending" }, { value: "approved", label: "Approved" }, { value: "rejected", label: "Rejected" }]} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Select label="Trạng Thái" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "pending", label: "Chờ Duyệt" }, { value: "approved", label: "Đã Duyệt" }, { value: "rejected", label: "Từ Chối" }]} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal></>
   )

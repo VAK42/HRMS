@@ -60,7 +60,7 @@ export default function WorkSchedulePage() {
     fetchEvents()
   }
   const handleDelete = async (id: number) => {
-    if (confirm("Delete This Event?")) {
+    if (confirm("Xóa Sự Kiện Này?")) {
       await api.delete(`/scheduleEvents/${id}`)
       setDetailOpen(false)
       fetchEvents()
@@ -85,8 +85,8 @@ export default function WorkSchedulePage() {
       <main className="pt-24 px-4 lg:px-8 pb-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
-            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Work Schedule</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Business Trip Calendar</p></div>
-            <Button variant="dark" onClick={() => openAddEvent()}><Plus className="w-4 h-4" /> Add Event</Button>
+            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Lịch Làm Việc</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Lịch Công Tác</p></div>
+            <Button variant="dark" onClick={() => openAddEvent()}><Plus className="w-4 h-4" /> Thêm Sự Kiện</Button>
           </div>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -95,11 +95,11 @@ export default function WorkSchedulePage() {
                 <CardTitle>{monthName}</CardTitle>
                 <button onClick={nextMonth} className={`p-2 rounded-lg ${isDark ? "hover:bg-white/10" : "hover:bg-black/10"}`}><ChevronRight className="w-5 h-5" /></button>
               </div>
-              <Select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} options={[{ value: "", label: "All Departments" }, ...departments.map(d => ({ value: String(d.id), label: d.name }))]} className="w-48" />
+              <Select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} options={[{ value: "", label: "Tất Cả Phòng Ban" }, ...departments.map(d => ({ value: String(d.id), label: d.name }))]} className="w-48" />
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-7 gap-1 mb-2">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => <div key={day} className={`text-center text-sm font-medium py-2 ${isDark ? "text-white" : "text-black"}`}>{day}</div>)}
+                {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map(day => <div key={day} className={`text-center text-sm font-medium py-2 ${isDark ? "text-white" : "text-black"}`}>{day}</div>)}
               </div>
               <div className="grid grid-cols-7 gap-1">
                 {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`empty-${i}`} className="h-24" />)}
@@ -123,7 +123,7 @@ export default function WorkSchedulePage() {
                             {event.title}
                           </div>
                         ))}
-                        {dayEvents.length > 2 && <span className={`text-xs ${isDark ? "text-white/60" : "text-black/60"}`}>+{dayEvents.length - 2} More</span>}
+                        {dayEvents.length > 2 && <span className={`text-xs ${isDark ? "text-white/60" : "text-black/60"}`}>+{dayEvents.length - 2} Thêm</span>}
                       </div>
                     </div>
                   )
@@ -133,51 +133,51 @@ export default function WorkSchedulePage() {
           </Card>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={selectedDay ? `Add Event - ${monthName.split(" ")[0]} ${selectedDay}` : "Add Event"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={selectedDay ? `Thêm Sự Kiện - ${monthName.split(" ")[0]} ${selectedDay}` : "Thêm Sự Kiện"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Select label="Event Type" value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })} options={[{ value: "", label: "Select Type" }, { value: "Business Trip", label: "Business Trip" }, { value: "Leave", label: "Leave" }, { value: "Training", label: "Training" }, { value: "Meeting", label: "Meeting" }, { value: "Other", label: "Other" }]} required />
-          <Input label="Title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Loại Sự Kiện" value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })} options={[{ value: "", label: "Chọn Loại" }, { value: "Business Trip", label: "Công Tác" }, { value: "Leave", label: "Nghỉ Phép" }, { value: "Training", label: "Đào Tạo" }, { value: "Meeting", label: "Họp" }, { value: "Other", label: "Khác" }]} required />
+          <Input label="Tiêu Đề" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Start Date" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
-            <Input label="End Date" type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} required />
+            <Input label="Ngày Bắt Đầu" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
+            <Input label="Ngày Kết Thúc" type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} required />
           </div>
-          <Textarea label="Notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">Create Event</Button></div>
+          <Textarea label="Ghi Chú" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">Tạo Sự Kiện</Button></div>
         </form>
       </Modal>
-      <Modal isOpen={detailOpen} onClose={() => setDetailOpen(false)} title="Event Details" size="md">
+      <Modal isOpen={detailOpen} onClose={() => setDetailOpen(false)} title="Chi Tiết Sự Kiện" size="md">
         {selectedEvent && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Title</p>
+                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Tiêu Đề</p>
                 <p className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{selectedEvent.title}</p>
               </div>
               <div>
-                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Type</p>
+                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Loại</p>
                 <p className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{selectedEvent.eventType}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Employee</p>
+                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Nhân Viên</p>
                 <p className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{selectedEvent.employeeName || getEmployeeName(selectedEvent.employeeId)}</p>
               </div>
               <div>
-                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Duration</p>
+                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Thời Gian</p>
                 <p className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{formatDate(selectedEvent.startDate)} - {formatDate(selectedEvent.endDate)}</p>
               </div>
             </div>
             {selectedEvent.notes && (
               <div>
-                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Notes</p>
+                <p className={`text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>Ghi Chú</p>
                 <p className={`font-medium ${isDark ? "text-white" : "text-black"}`}>{selectedEvent.notes}</p>
               </div>
             )}
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="ghost" onClick={() => handleDelete(selectedEvent.id)}><Trash2 className="w-4 h-4 text-red-400" /> Delete</Button>
-              <Button variant="secondary" onClick={() => setDetailOpen(false)}>Close</Button>
+              <Button variant="ghost" onClick={() => handleDelete(selectedEvent.id)}><Trash2 className="w-4 h-4 text-red-400" /> Xóa</Button>
+              <Button variant="secondary" onClick={() => setDetailOpen(false)}>Đóng</Button>
             </div>
           </div>
         )}

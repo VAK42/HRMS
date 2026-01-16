@@ -40,13 +40,13 @@ export default function DegreesPage() {
     else await api.post("/degrees", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Degree?")) { await api.delete(`/degrees/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bằng Cấp Này?")) { await api.delete(`/degrees/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (d: Degree & { employeeName?: string }) => d.employeeName || "-" },
-    { key: "degreeType", header: "Degree Type" },
-    { key: "major", header: "Major" },
-    { key: "institution", header: "Institution" },
-    { key: "graduationYear", header: "Year" },
+    { key: "employeeName", header: "Nhân Viên", render: (d: Degree & { employeeName?: string }) => d.employeeName || "-" },
+    { key: "degreeType", header: "Loại Bằng Cấp" },
+    { key: "major", header: "Chuyên Ngành" },
+    { key: "institution", header: "Nơi Đào Tạo" },
+    { key: "graduationYear", header: "Năm TN" },
   ]
   return (
     <>
@@ -54,23 +54,23 @@ export default function DegreesPage() {
       <main className="pt-24 px-4 lg:px-8 pb-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
-            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Degrees</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Employee Qualifications</p></div>
-            <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", degreeType: "", major: "", institution: "", graduationYear: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Degree</Button>
+            <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Bằng Cấp</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Trình Độ Chuyên Môn Nhân Viên</p></div>
+            <Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", degreeType: "", major: "", institution: "", graduationYear: "" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Bằng Cấp</Button>
           </div>
           <Card><CardContent className="p-6">
-            <DataTable columns={columns} data={degrees} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} onSearch={setSearch} searchPlaceholder="Search Degrees..." loading={loading}
+            <DataTable columns={columns} data={degrees} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} onSearch={setSearch} searchPlaceholder="Tìm Kiếm Bằng Cấp..." loading={loading}
               actions={(d) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(d); setFormData({ employeeId: String(d.employeeId), degreeType: d.degreeType, major: d.major, institution: d.institution, graduationYear: String(d.graduationYear) }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(d.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} />
           </CardContent></Card>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Degree" : "Add Degree"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Bằng Cấp" : "Thêm Bằng Cấp"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Select label="Degree Type" value={formData.degreeType} onChange={(e) => setFormData({ ...formData, degreeType: e.target.value })} options={[{ value: "", label: "Select Type" }, { value: "Bachelor", label: "Bachelor" }, { value: "Master", label: "Master" }, { value: "PhD", label: "PhD" }, { value: "Certificate", label: "Certificate" }]} required />
-          <Input label="Major" value={formData.major} onChange={(e) => setFormData({ ...formData, major: e.target.value })} required />
-          <Input label="Institution" value={formData.institution} onChange={(e) => setFormData({ ...formData, institution: e.target.value })} required />
-          <Input label="Graduation Year" type="number" value={formData.graduationYear} onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })} required />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Select label="Loại Bằng Cấp" value={formData.degreeType} onChange={(e) => setFormData({ ...formData, degreeType: e.target.value })} options={[{ value: "", label: "Chọn Loại" }, { value: "Bachelor", label: "Cử Nhân" }, { value: "Master", label: "Thạc Sĩ" }, { value: "PhD", label: "Tiến Sĩ" }, { value: "Certificate", label: "Chứng Chỉ" }]} required />
+          <Input label="Chuyên Ngành" value={formData.major} onChange={(e) => setFormData({ ...formData, major: e.target.value })} required />
+          <Input label="Nơi Đào Tạo" value={formData.institution} onChange={(e) => setFormData({ ...formData, institution: e.target.value })} required />
+          <Input label="Năm Tốt Nghiệp" type="number" value={formData.graduationYear} onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })} required />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal>
     </>

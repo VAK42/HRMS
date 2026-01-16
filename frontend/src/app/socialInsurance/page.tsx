@@ -37,27 +37,27 @@ export default function SocialInsurancePage() {
     else await api.post("/socialInsurance", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Record?")) { await api.delete(`/socialInsurance/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Bản Ghi Này?")) { await api.delete(`/socialInsurance/${id}`); fetchData() } }
   const columns = [
-    { key: "employeeName", header: "Employee", render: (s: SocialInsurance & { employeeName?: string }) => s.employeeName || "-" },
-    { key: "insuranceNumber", header: "Insurance No." },
-    { key: "startDate", header: "Start Date", render: (s: SocialInsurance) => formatDate(s.startDate) },
-    { key: "monthlyContribution", header: "Monthly", render: (s: SocialInsurance) => formatCurrency(s.monthlyContribution) },
-    { key: "status", header: "Status", render: (s: SocialInsurance) => <Badge variant={s.status === "active" ? "success" : "danger"}>{s.status}</Badge> },
+    { key: "employeeName", header: "Nhân Viên", render: (s: SocialInsurance & { employeeName?: string }) => s.employeeName || "-" },
+    { key: "insuranceNumber", header: "Số BHXH" },
+    { key: "startDate", header: "Ngày Bắt Đầu", render: (s: SocialInsurance) => formatDate(s.startDate) },
+    { key: "monthlyContribution", header: "Đóng Hằng Tháng", render: (s: SocialInsurance) => formatCurrency(s.monthlyContribution) },
+    { key: "status", header: "Trạng Thái", render: (s: SocialInsurance) => <Badge variant={s.status === "active" ? "success" : "danger"}>{s.status === "active" ? "Hoạt Động" : "Ngừng Hoạt Động"}</Badge> },
   ]
   return (
     <><Navbar /><main className="pt-24 px-4 lg:px-8 pb-8"><div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Social Insurance</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Insurance Records</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", insuranceNumber: "", startDate: "", monthlyContribution: "", status: "active" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add Record</Button></div>
+      <div className="flex items-center justify-between"><div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Bảo Hiểm Xã Hội</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Hồ Sơ Bảo Hiểm</p></div><Button variant="dark" onClick={() => { setEditing(null); setFormData({ employeeId: "", insuranceNumber: "", startDate: "", monthlyContribution: "", status: "active" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm Bản Ghi</Button></div>
       <Card><CardContent className="p-6"><DataTable columns={columns} data={records} totalItems={total} currentPage={page} pageSize={10} onPageChange={setPage} loading={loading} actions={(s) => (<><Button variant="ghost" size="sm" onClick={() => { setEditing(s); setFormData({ employeeId: String(s.employeeId), insuranceNumber: s.insuranceNumber, startDate: s.startDate, monthlyContribution: String(s.monthlyContribution), status: s.status }); setModalOpen(true) }}><Edit className="w-4 h-4" /></Button><Button variant="ghost" size="sm" onClick={() => handleDelete(s.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button></>)} /></CardContent></Card>
     </div></main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Record" : "Add Record"} size="md">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Bản Ghi" : "Thêm Bản Ghi"} size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Select label="Employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Select Employee" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
-          <Input label="Insurance Number" value={formData.insuranceNumber} onChange={(e) => setFormData({ ...formData, insuranceNumber: e.target.value })} required />
-          <Input label="Start Date" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
-          <Input label="Monthly Contribution" type="number" value={formData.monthlyContribution} onChange={(e) => setFormData({ ...formData, monthlyContribution: e.target.value })} required />
-          <Select label="Status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Select label="Nhân Viên" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} options={[{ value: "", label: "Chọn Nhân Viên" }, ...employees.map(e => ({ value: e.id, label: e.fullName }))]} required />
+          <Input label="Số Bảo Hiểm" value={formData.insuranceNumber} onChange={(e) => setFormData({ ...formData, insuranceNumber: e.target.value })} required />
+          <Input label="Ngày Bắt Đầu" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
+          <Input label="Mức Đóng Hằng Tháng" type="number" value={formData.monthlyContribution} onChange={(e) => setFormData({ ...formData, monthlyContribution: e.target.value })} required />
+          <Select label="Trạng Thái" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} options={[{ value: "active", label: "Hoạt Động" }, { value: "inactive", label: "Ngừng Hoạt Động" }]} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal></>
   )

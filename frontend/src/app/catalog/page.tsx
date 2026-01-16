@@ -11,12 +11,12 @@ import { Plus, Edit, Trash2, Building2, Briefcase, FileText, Globe, GraduationCa
 import { useEffect, useState } from "react"
 interface CatalogItem { id: number; catalogType: string; name: string; code: string; description: string; isActive: number }
 const catalogTypes = [
-  { value: "department", label: "Departments", icon: Building2 },
-  { value: "position", label: "Positions", icon: Briefcase },
-  { value: "contractType", label: "Contract Types", icon: FileText },
-  { value: "leaveType", label: "Leave Types", icon: FileText },
-  { value: "nationality", label: "Nationalities", icon: Globe },
-  { value: "degreeType", label: "Degree Types", icon: GraduationCap },
+  { value: "department", label: "Phòng Ban", icon: Building2 },
+  { value: "position", label: "Vị Trí", icon: Briefcase },
+  { value: "contractType", label: "Loại Hợp Đồng", icon: FileText },
+  { value: "leaveType", label: "Loại Nghỉ Phép", icon: FileText },
+  { value: "nationality", label: "Quốc Tịch", icon: Globe },
+  { value: "degreeType", label: "Loại Bằng Cấp", icon: GraduationCap },
 ]
 export default function CatalogPage() {
   const { isDark } = useTheme()
@@ -42,13 +42,13 @@ export default function CatalogPage() {
     else await api.post("/catalog", payload)
     setModalOpen(false); setEditing(null); fetchData()
   }
-  const handleDelete = async (id: number) => { if (confirm("Delete This Item?")) { await api.delete(`/catalog/${id}`); fetchData() } }
+  const handleDelete = async (id: number) => { if (confirm("Xóa Mục Này?")) { await api.delete(`/catalog/${id}`); fetchData() } }
   return (
     <>
       <Navbar />
       <main className="pt-24 px-4 lg:px-8 pb-8">
         <div className="max-w-7xl mx-auto space-y-6">
-          <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Catalog Management</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Manage System Categories</p></div>
+          <div><h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Quản Lý Danh Mục</h1><p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Quản Lý Danh Mục Hệ Thống</p></div>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <Card className="lg:col-span-1">
               <CardContent className="p-4">
@@ -65,13 +65,13 @@ export default function CatalogPage() {
             <Card className="lg:col-span-3">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{catalogTypes.find(t => t.value === activeType)?.label}</CardTitle>
-                <Button variant="dark" size="sm" onClick={() => { setEditing(null); setFormData({ name: "", code: "", description: "", isActive: "1" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Add</Button>
+                <Button variant="dark" size="sm" onClick={() => { setEditing(null); setFormData({ name: "", code: "", description: "", isActive: "1" }); setModalOpen(true) }}><Plus className="w-4 h-4" /> Thêm</Button>
               </CardHeader>
               <CardContent>
                 {loading ? (
                   <div className="space-y-2">{[...Array(5)].map((_, i) => <div key={i} className={`h-12 rounded-lg animate-pulse ${isDark ? "bg-white/5" : "bg-black/5"}`} />)}</div>
                 ) : items.length === 0 ? (
-                  <p className={`text-center py-8 ${isDark ? "text-white/50" : "text-black/50"}`}>No Items Found</p>
+                  <p className={`text-center py-8 ${isDark ? "text-white/50" : "text-black/50"}`}>Không Có Dữ Liệu</p>
                 ) : (
                   <div className="space-y-2">
                     {items.map(item => (
@@ -93,13 +93,13 @@ export default function CatalogPage() {
           </div>
         </div>
       </main>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Item" : "Add Item"} size="sm">
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Sửa Danh Mục" : "Thêm Danh Mục"} size="sm">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-          <Input label="Code" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} />
-          <Input label="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
-          <Select label="Status" value={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.value })} options={[{ value: "1", label: "Active" }, { value: "0", label: "Inactive" }]} />
-          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button type="submit">{editing ? "Update" : "Create"}</Button></div>
+          <Input label="Tên" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+          <Input label="Mã" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} />
+          <Input label="Mô Tả" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+          <Select label="Trạng Thái" value={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.value })} options={[{ value: "1", label: "Hoạt Động" }, { value: "0", label: "Ngừng HĐ" }]} />
+          <div className="flex justify-end gap-2 pt-4"><Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Hủy</Button><Button type="submit">{editing ? "Cập Nhật" : "Tạo Mới"}</Button></div>
         </form>
       </Modal>
     </>

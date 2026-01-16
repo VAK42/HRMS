@@ -28,19 +28,19 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true)
   const [customizeOpen, setCustomizeOpen] = useState(false)
   const [columnDefs, setColumnDefs] = useState<ColumnDef[]>([
-    { key: "employeeCode", header: "Code", visible: true, sortable: true },
-    { key: "fullName", header: "Full Name", visible: true, sortable: true },
+    { key: "employeeCode", header: "Mã NV", visible: true, sortable: true },
+    { key: "fullName", header: "Họ Tên", visible: true, sortable: true },
     { key: "email", header: "Email", visible: true },
-    { key: "phone", header: "Phone", visible: true },
-    { key: "departmentName", header: "Department", visible: true },
-    { key: "positionName", header: "Position", visible: true },
-    { key: "startDate", header: "Start Date", visible: true },
-    { key: "contractType", header: "Contract Type", visible: true },
-    { key: "baseSalary", header: "Salary", visible: true },
-    { key: "gender", header: "Gender", visible: false },
-    { key: "dateOfBirth", header: "Date Of Birth", visible: false },
-    { key: "idNumber", header: "ID Number", visible: false },
-    { key: "address", header: "Address", visible: false },
+    { key: "phone", header: "SĐT", visible: true },
+    { key: "departmentName", header: "Phòng Ban", visible: true },
+    { key: "positionName", header: "Chức Vụ", visible: true },
+    { key: "startDate", header: "Ngày Bắt Đầu", visible: true },
+    { key: "contractType", header: "Loại Hợp Đồng", visible: true },
+    { key: "baseSalary", header: "Lương Tối Thiểu", visible: true },
+    { key: "gender", header: "Giới Tính", visible: false },
+    { key: "dateOfBirth", header: "Ngày Sinh", visible: false },
+    { key: "idNumber", header: "CMND/CCCD", visible: false },
+    { key: "address", header: "Địa Chỉ", visible: false },
   ])
   useEffect(() => {
     api.get<ReportEmployee[]>("/reports/employees")
@@ -86,17 +86,17 @@ export default function ReportsPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Reports</h1>
-              <p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Comprehensive Employee Reports</p>
+              <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-black"}`}>Báo Cáo</h1>
+              <p className={`mt-1 ${isDark ? "text-white" : "text-black"}`}>Báo Cáo Nhân Viên Chi Tiết</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setCustomizeOpen(true)}><Filter className="w-4 h-4" /> Customize Columns</Button>
-              <Button variant="dark" onClick={exportToCSV}><Download className="w-4 h-4" /> Export Report</Button>
+              <Button variant="secondary" onClick={() => setCustomizeOpen(true)}><Filter className="w-4 h-4" /> Tùy Chỉnh Cột</Button>
+              <Button variant="dark" onClick={exportToCSV}><Download className="w-4 h-4" /> Xuất Báo Cáo</Button>
             </div>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>Detailed Employee List ({columnDefs.filter(c => c.visible).length} Columns)</CardTitle>
+              <CardTitle>Danh Sách Nhân Viên Chi Tiết ({columnDefs.filter(c => c.visible).length} Cột)</CardTitle>
             </CardHeader>
             <CardContent>
               <DataTable
@@ -104,15 +104,15 @@ export default function ReportsPage() {
                 data={employees}
                 totalItems={employees.length}
                 loading={loading}
-                emptyMessage="No Employee Data Available"
+                emptyMessage="Không Có Dữ Liệu Nhân Viên"
               />
             </CardContent>
           </Card>
         </div>
       </main>
-      <Modal isOpen={customizeOpen} onClose={() => setCustomizeOpen(false)} title="Customize Columns" size="sm">
+      <Modal isOpen={customizeOpen} onClose={() => setCustomizeOpen(false)} title="Tùy Chỉnh Cột" size="sm">
         <div className="space-y-2">
-          <p className={`text-sm mb-4 ${isDark ? "text-white/70" : "text-black/70"}`}>Select Which Columns To Display In The Report:</p>
+          <p className={`text-sm mb-4 ${isDark ? "text-white/70" : "text-black/70"}`}>Chọn Cột Để Hiển Thị Trong Báo Cáo:</p>
           {columnDefs.map(col => (
             <button
               key={col.key}
@@ -124,7 +124,7 @@ export default function ReportsPage() {
             </button>
           ))}
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="secondary" onClick={() => setCustomizeOpen(false)}>Close</Button>
+            <Button type="button" variant="secondary" onClick={() => setCustomizeOpen(false)}>Đóng</Button>
           </div>
         </div>
       </Modal>

@@ -91,7 +91,7 @@ export default function OrgChartPage() {
             <div className={`text-xs truncate ${isDark ? "text-white/60" : "text-black/60"}`}>{node.position} • {node.department}</div>
           </div>
           {hasChildren && (
-            <span className={`text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>{node.children.length} Reports</span>
+            <span className={`text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>{node.children.length} Cấp Dưới</span>
           )}
         </div>
         {hasChildren && isExpanded && (
@@ -110,11 +110,11 @@ export default function OrgChartPage() {
       <main className="pt-16 px-4 pb-6">
         <div className="w-full space-y-5">
           <div>
-            <h1 className={`text-lg font-semibold ${isDark ? "text-white" : "text-black"}`}>Organization Chart</h1>
-            <p className={`text-xs ${isDark ? "text-white/60" : "text-black/60"}`}>Employee Hierarchy</p>
+            <h1 className={`text-lg font-semibold ${isDark ? "text-white" : "text-black"}`}>Sơ Đồ Tổ Chức</h1>
+            <p className={`text-xs ${isDark ? "text-white/60" : "text-black/60"}`}>Cấu Trúc Nhân Sự</p>
           </div>
           <Card>
-            <CardHeader><CardTitle>Visual Tree</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Sơ Đồ Cây</CardTitle></CardHeader>
             <CardContent>
               {loading ? (
                 <div className="space-y-3">
@@ -123,7 +123,7 @@ export default function OrgChartPage() {
                   ))}
                 </div>
               ) : tree.length === 0 ? (
-                <p className={`text-center py-8 text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>No Employees Found</p>
+                <p className={`text-center py-8 text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>Không Tìm Thấy Nhân Viên</p>
               ) : (
                 <div className="overflow-x-auto py-6">
                   <Tree
@@ -139,7 +139,7 @@ export default function OrgChartPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle>Employee List</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Danh Sách Nhân Viên</CardTitle></CardHeader>
             <CardContent>
               {loading ? (
                 <div className="space-y-3">
@@ -148,7 +148,7 @@ export default function OrgChartPage() {
                   ))}
                 </div>
               ) : tree.length === 0 ? (
-                <p className={`text-center py-8 text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>No Employees Found</p>
+                <p className={`text-center py-8 text-xs ${isDark ? "text-white/50" : "text-black/50"}`}>Không Tìm Thấy Nhân Viên</p>
               ) : (
                 <div className="space-y-2">
                   {tree.map(node => (

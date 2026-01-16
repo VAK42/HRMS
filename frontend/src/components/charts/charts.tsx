@@ -20,7 +20,7 @@ interface BarChartProps {
   data: number[]
   label?: string
 }
-export function BarChart({ labels, data, label = "Value" }: BarChartProps) {
+export function BarChart({ labels, data, label = "Giá Trị" }: BarChartProps) {
   const { isDark } = useTheme()
   return (
     <div style={{ height: "250px" }}>
@@ -116,7 +116,7 @@ interface LineChartProps {
   data: number[]
   label?: string
 }
-export function LineChart({ labels, data, label = "Value" }: LineChartProps) {
+export function LineChart({ labels, data, label = "Giá Trị" }: LineChartProps) {
   const { isDark } = useTheme()
   return (
     <div style={{ height: "250px" }}>

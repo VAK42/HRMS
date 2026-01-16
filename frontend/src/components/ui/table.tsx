@@ -25,8 +25,8 @@ interface DataTableProps<T> {
 }
 export function DataTable<T extends { id: number }>({
   columns, data, totalItems = 0, currentPage = 1, pageSize = 10,
-  onPageChange, onSearch, searchPlaceholder = "Search...",
-  actions, loading = false, emptyMessage = "No Data Found"
+  onPageChange, onSearch, searchPlaceholder = "Tìm Kiếm...",
+  actions, loading = false, emptyMessage = "Không Có Dữ Liệu"
 }: DataTableProps<T>) {
   const { isDark } = useTheme()
   const [sortKey, setSortKey] = useState<string | null>(null)
@@ -84,7 +84,7 @@ export function DataTable<T extends { id: number }>({
                   </div>
                 </th>
               ))}
-              {actions && <th className={`text-left py-2.5 px-3 text-xs font-medium ${isDark ? "text-slate-500" : "text-slate-500"}`}>Actions</th>}
+              {actions && <th className={`text-left py-2.5 px-3 text-xs font-medium ${isDark ? "text-slate-500" : "text-slate-500"}`}>Hành Động</th>}
             </tr>
           </thead>
           <tbody>
