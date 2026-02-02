@@ -1,0 +1,10 @@
+import { getInsuranceRecords, createInsurance, updateInsurance, deleteInsurance, exportInsurance } from '../controllers/insuranceController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.get('/', authenticateToken, requireRole('hrro'), getInsuranceRecords);
+router.get('/export', authenticateToken, requireRole('hrro'), exportInsurance);
+router.post('/', authenticateToken, requireRole('hrro'), createInsurance);
+router.put('/:id', authenticateToken, requireRole('hrro'), updateInsurance);
+router.delete('/:id', authenticateToken, requireRole('hrro'), deleteInsurance);
+export default router;

@@ -1,0 +1,11 @@
+import { getPositions, createPosition, updatePosition, deletePosition, getAllPositions } from '../controllers/positionController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getPositions);
+router.get('/all', getAllPositions);
+router.post('/', requireRole('hrro'), createPosition);
+router.put('/:id', requireRole('hrro'), updatePosition);
+router.delete('/:id', requireRole('hrro'), deletePosition);
+export default router;

@@ -1,0 +1,12 @@
+import { getDashboardStats, getEmployeesByDepartment, getEmployeeStatusDistribution, getMonthlyAttendance, getLeaveStatistics, getHiringTrends } from '../controllers/dashboardController.js';
+import { authenticateToken } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/stats', getDashboardStats);
+router.get('/employeesByDepartment', getEmployeesByDepartment);
+router.get('/employeeStatus', getEmployeeStatusDistribution);
+router.get('/monthlyAttendance', getMonthlyAttendance);
+router.get('/leaveStatistics', getLeaveStatistics);
+router.get('/hiringTrends', getHiringTrends);
+export default router;

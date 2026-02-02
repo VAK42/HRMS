@@ -1,0 +1,12 @@
+import { getAttendance, checkIn, checkOut, approveAttendance, getTodayAttendance, exportAttendance } from '../controllers/attendanceController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getAttendance);
+router.get('/today', getTodayAttendance);
+router.get('/export', requireRole('hrro', 'manager'), exportAttendance);
+router.post('/checkIn', checkIn);
+router.post('/checkOut', checkOut);
+router.put('/:id/approve', requireRole('hrro', 'manager'), approveAttendance);
+export default router;

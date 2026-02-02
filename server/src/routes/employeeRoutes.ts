@@ -1,0 +1,13 @@
+import { getEmployees, getOrgChart, createEmployee, updateEmployee, deleteEmployee, exportEmployees, getManagers } from '../controllers/employeeController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getEmployees);
+router.get('/orgchart', getOrgChart);
+router.get('/managers', getManagers);
+router.get('/export', requireRole('hrro'), exportEmployees);
+router.post('/', requireRole('hrro'), createEmployee);
+router.put('/:id', requireRole('hrro'), updateEmployee);
+router.delete('/:id', requireRole('hrro'), deleteEmployee);
+export default router;

@@ -1,0 +1,14 @@
+import { getLeaveRequests, createLeaveRequest, approveLeaveRequest, cancelLeaveRequest, deleteLeaveRequest, getLeaveBalance, getLeaveTypes, exportLeaveRequests } from '../controllers/leaveController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getLeaveRequests);
+router.get('/types', getLeaveTypes);
+router.get('/balance', getLeaveBalance);
+router.get('/export', requireRole('hrro', 'manager'), exportLeaveRequests);
+router.post('/', createLeaveRequest);
+router.put('/:id/approve', requireRole('hrro', 'manager'), approveLeaveRequest);
+router.put('/:id/cancel', cancelLeaveRequest);
+router.delete('/:id', requireRole('hrro'), deleteLeaveRequest);
+export default router;

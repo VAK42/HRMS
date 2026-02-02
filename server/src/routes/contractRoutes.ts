@@ -1,0 +1,12 @@
+import { getContracts, createContract, updateContract, activateContract, deleteContract, exportContracts } from '../controllers/contractController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getContracts);
+router.get('/export', requireRole('hrro'), exportContracts);
+router.post('/', requireRole('hrro'), createContract);
+router.put('/:id', requireRole('hrro'), updateContract);
+router.put('/:id/activate', requireRole('hrro'), activateContract);
+router.delete('/:id', requireRole('hrro'), deleteContract);
+export default router;

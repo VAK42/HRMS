@@ -1,0 +1,11 @@
+import { getDepartments, createDepartment, updateDepartment, deleteDepartment, getAllDepartments } from '../controllers/departmentController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getDepartments);
+router.get('/all', getAllDepartments);
+router.post('/', requireRole('hrro'), createDepartment);
+router.put('/:id', requireRole('hrro'), updateDepartment);
+router.delete('/:id', requireRole('hrro'), deleteDepartment);
+export default router;

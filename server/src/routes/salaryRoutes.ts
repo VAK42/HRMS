@@ -1,0 +1,11 @@
+import { getSalaries, calculateMonthlySalary, approveSalary, markSalaryPaid, exportSalaries } from '../controllers/salaryController.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { Router } from 'express';
+const router = Router();
+router.use(authenticateToken);
+router.get('/', getSalaries);
+router.get('/export', requireRole('hrro'), exportSalaries);
+router.post('/calculate', requireRole('hrro'), calculateMonthlySalary);
+router.put('/:id/approve', requireRole('hrro'), approveSalary);
+router.put('/:id/pay', requireRole('hrro'), markSalaryPaid);
+export default router;
