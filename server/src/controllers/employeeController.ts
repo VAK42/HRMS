@@ -5,6 +5,7 @@ import { AuthRequest } from '../middleware/auth.js';
 import { v4 as uuidv4 } from 'uuid';
 import { Response } from 'express';
 import db from '../database/connection.js';
+import bcrypt from 'bcryptjs';
 const allowedSortFields = ['employeeCode', 'fullName', 'email', 'departmentId', 'positionId', 'hireDate', 'employmentStatus', 'createdAt'];
 export const getEmployees = (req: AuthRequest, res: Response) => {
   try {
@@ -81,9 +82,15 @@ export const getOrgChart = (req: AuthRequest, res: Response) => {
   }
 };
 
-export const createEmployee = (req: AuthRequest, res: Response) => {
+export const createEmployee = async (req: AuthRequest, res: Response) => {
   try {
-    const data = req.body as Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>;
+    const data = req.body as Omit<Employee, 'id' | 'createdAt' | 'updatedAt'> & { password: string; role: 'hrro' | 'manager' | 'employee' };
+    if (!data.password || data.password.trim().length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật Khẩu Phải Từ 6 Ký Tự Trở Lên' });
+    }
+    if (!data.role || !['hrro', 'manager', 'employee'].includes(data.role)) {
+      return res.status(400).json({ success: false, message: 'Vai Trò Không Hợp Lệ' });
+    }
     const existingEmail = db.prepare('SELECT id FROM employees WHERE email = ?').get(data.email);
     if (existingEmail) {
       return res.status(400).json({ success: false, message: 'Email Đã Tồn Tại' });
@@ -92,22 +99,31 @@ export const createEmployee = (req: AuthRequest, res: Response) => {
     if (existingCode) {
       return res.status(400).json({ success: false, message: 'Mã Nhân Viên Đã Tồn Tại' });
     }
+    const existingUserEmail = db.prepare('SELECT id FROM users WHERE email = ?').get(data.email);
+    if (existingUserEmail) {
+      return res.status(400).json({ success: false, message: 'Email Tài Khoản Đã Tồn Tại' });
+    }
     const id = uuidv4();
     const timestamp = now();
     db.prepare(`
       INSERT INTO employees (id, employeeCode, firstName, lastName, fullName, email, phone, personalEmail, dateOfBirth, gender, nationalId, nationalIdDate, nationalIdPlace, taxCode, bankAccount, bankName, bankBranch, permanentAddress, currentAddress, positionId, departmentId, managerId, isManager, hireDate, terminationDate, employmentStatus, employmentType, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, data.employeeCode, data.firstName, data.lastName, data.fullName, data.email, data.phone, data.personalEmail, data.dateOfBirth, data.gender, data.nationalId, data.nationalIdDate, data.nationalIdPlace, data.taxCode, data.bankAccount, data.bankName, data.bankBranch, data.permanentAddress, data.currentAddress, data.positionId, data.departmentId, data.managerId || null, data.isManager ? 1 : 0, data.hireDate, null, data.employmentStatus, data.employmentType, timestamp, timestamp);
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const userId = uuidv4();
+    db.prepare(`INSERT INTO users (id, email, passwordHash, role, employeeId, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(userId, data.email, passwordHash, data.role, id, 1, timestamp, timestamp);
     return res.status(201).json({ success: true, data: { id }, message: 'Tạo Nhân Viên Thành Công' });
   } catch (error) {
     console.error('Lỗi Tạo Nhân Viên:', error);
     return res.status(500).json({ success: false, message: 'Lỗi Hệ Thống' });
   }
 };
-export const updateEmployee = (req: AuthRequest, res: Response) => {
+export const updateEmployee = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const data = req.body as Partial<Employee>;
+    const { password, role, ...rest } = req.body as Partial<Employee> & { password?: string; role?: string };
+    const data = rest;
     const existing = db.prepare('SELECT id FROM employees WHERE id = ?').get(id);
     if (!existing) {
       return res.status(404).json({ success: false, message: 'Không Tìm Thấy Nhân Viên' });
@@ -122,14 +138,39 @@ export const updateEmployee = (req: AuthRequest, res: Response) => {
     if (fields.length === 0) {
       return res.status(400).json({ success: false, message: 'Không Có Dữ Liệu Cập Nhật' });
     }
-    const updates = fields.map(f => `${f} = ?`).join(', ');
-    const values = fields.map(f => {
-      const val = (data as Record<string, unknown>)[f];
-      if (f === 'isManager') return val ? 1 : 0;
-      if (f === 'managerId' && (val === '' || val === undefined)) return null;
-      return val;
-    });
-    db.prepare(`UPDATE employees SET ${updates}, updatedAt = ? WHERE id = ?`).run(...values, now(), id);
+    if (fields.length > 0) {
+      const updates = fields.map(f => `${f} = ?`).join(', ');
+      const values = fields.map(f => {
+        const val = (data as Record<string, unknown>)[f];
+        if (f === 'isManager') return val ? 1 : 0;
+        if (f === 'managerId' && (val === '' || val === undefined)) return null;
+        return val;
+      });
+      db.prepare(`UPDATE employees SET ${updates}, updatedAt = ? WHERE id = ?`).run(...values, now(), id);
+    }
+    if (password || role) {
+      if (role && !['manager', 'employee'].includes(role)) {
+        return res.status(400).json({ success: false, message: 'Vai Trò Không Hợp Lệ' });
+      }
+      if (password && password.trim().length < 6) {
+        return res.status(400).json({ success: false, message: 'Mật Khẩu Phải Từ 6 Ký Tự Trở Lên' });
+      }
+      const userUpdates: string[] = [];
+      const userValues: unknown[] = [];
+      if (password) {
+        const passwordHash = await bcrypt.hash(password, 10);
+        userUpdates.push('passwordHash = ?');
+        userValues.push(passwordHash);
+      }
+      if (role) {
+        userUpdates.push('role = ?');
+        userValues.push(role);
+      }
+      userUpdates.push('updatedAt = ?');
+      userValues.push(now());
+      userValues.push(id);
+      db.prepare(`UPDATE users SET ${userUpdates.join(', ')} WHERE employeeId = ?`).run(...userValues);
+    }
     return res.json({ success: true, message: 'Cập Nhật Nhân Viên Thành Công' });
   } catch (error) {
     console.error('Lỗi Cập Nhật Nhân Viên:', error);
