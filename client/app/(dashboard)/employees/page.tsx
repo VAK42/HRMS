@@ -19,7 +19,7 @@ export default function EmployeesPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
-  const [formData, setFormData] = useState({ employeeCode: '', firstName: '', lastName: '', fullName: '', email: '', phone: '', personalEmail: '', dateOfBirth: '', gender: 'male', nationalId: '', nationalIdDate: '', nationalIdPlace: '', taxCode: '', bankAccount: '', bankName: '', bankBranch: '', permanentAddress: '', currentAddress: '', positionId: '', departmentId: '', managerId: '', isManager: 0, hireDate: '', employmentStatus: 'probation', employmentType: 'fullTime' });
+  const [formData, setFormData] = useState({ employeeCode: '', firstName: '', lastName: '', fullName: '', email: '', phone: '', personalEmail: '', dateOfBirth: '', gender: 'male', nationalId: '', nationalIdDate: '', nationalIdPlace: '', taxCode: '', bankAccount: '', bankName: '', bankBranch: '', permanentAddress: '', currentAddress: '', positionId: '', departmentId: '', managerId: '', isManager: 0, hireDate: '', employmentStatus: 'probation', employmentType: 'fullTime', password: '' });
   const [viewEmployee, setViewEmployee] = useState<Employee | null>(null);
   const fetchEmployees = async () => {
     try {
@@ -58,19 +58,22 @@ export default function EmployeesPage() {
       setEditingEmployee(emp);
       const position = positions.find(p => p.id === emp.positionId);
       const isManager = position && position.level <= 2 ? 1 : 0;
-      setFormData({ employeeCode: emp.employeeCode, firstName: emp.firstName, lastName: emp.lastName, fullName: emp.fullName, email: emp.email, phone: emp.phone, personalEmail: emp.personalEmail, dateOfBirth: emp.dateOfBirth, gender: emp.gender, nationalId: emp.nationalId, nationalIdDate: emp.nationalIdDate, nationalIdPlace: emp.nationalIdPlace, taxCode: emp.taxCode, bankAccount: emp.bankAccount, bankName: emp.bankName, bankBranch: emp.bankBranch, permanentAddress: emp.permanentAddress, currentAddress: emp.currentAddress, positionId: emp.positionId, departmentId: emp.departmentId, managerId: isManager ? '' : (emp.managerId || ''), isManager, hireDate: emp.hireDate, employmentStatus: emp.employmentStatus, employmentType: emp.employmentType });
+      setFormData({ employeeCode: emp.employeeCode, firstName: emp.firstName, lastName: emp.lastName, fullName: emp.fullName, email: emp.email, phone: emp.phone, personalEmail: emp.personalEmail, dateOfBirth: emp.dateOfBirth, gender: emp.gender, nationalId: emp.nationalId, nationalIdDate: emp.nationalIdDate, nationalIdPlace: emp.nationalIdPlace, taxCode: emp.taxCode, bankAccount: emp.bankAccount, bankName: emp.bankName, bankBranch: emp.bankBranch, permanentAddress: emp.permanentAddress, currentAddress: emp.currentAddress, positionId: emp.positionId, departmentId: emp.departmentId, managerId: isManager ? '' : (emp.managerId || ''), isManager, hireDate: emp.hireDate, employmentStatus: emp.employmentStatus, employmentType: emp.employmentType, password: '' });
     } else {
       setEditingEmployee(null);
-      setFormData({ employeeCode: '', firstName: '', lastName: '', fullName: '', email: '', phone: '', personalEmail: '', dateOfBirth: '', gender: 'male', nationalId: '', nationalIdDate: '', nationalIdPlace: '', taxCode: '', bankAccount: '', bankName: '', bankBranch: '', permanentAddress: '', currentAddress: '', positionId: '', departmentId: '', managerId: '', isManager: 0, hireDate: '', employmentStatus: 'probation', employmentType: 'fullTime' });
+      setFormData({ employeeCode: '', firstName: '', lastName: '', fullName: '', email: '', phone: '', personalEmail: '', dateOfBirth: '', gender: 'male', nationalId: '', nationalIdDate: '', nationalIdPlace: '', taxCode: '', bankAccount: '', bankName: '', bankBranch: '', permanentAddress: '', currentAddress: '', positionId: '', departmentId: '', managerId: '', isManager: 0, hireDate: '', employmentStatus: 'probation', employmentType: 'fullTime', password: '' });
     }
     setShowModal(true);
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = { ...formData, fullName: `${formData.lastName} ${formData.firstName}` };
-      if (editingEmployee) { await api.put(`/employees/${editingEmployee.id}`, data); }
-      else { await api.post('/employees', data); }
+      const role = formData.isManager ? 'manager' : 'employee';
+      if (editingEmployee) {
+        await api.put(`/employees/${editingEmployee.id}`, { ...formData, fullName: `${formData.lastName} ${formData.firstName}`, role });
+      } else {
+        await api.post('/employees', { ...formData, fullName: `${formData.lastName} ${formData.firstName}`, role });
+      }
       setShowModal(false);
       fetchEmployees();
     } catch (error) { alert(error instanceof Error ? error.message : 'Lỗi'); }
@@ -268,6 +271,9 @@ Trạng Thái: ${emp.employmentStatus === 'active' ? 'Đang Làm Việc' : emp.e
                   <div><label className="block text-sm text-gray-700 mb-1">Ngày Vào Làm</label><input className="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-green-700" type="date" value={formData.hireDate} onChange={e => setFormData({ ...formData, hireDate: e.target.value })} required /></div>
                   <div><label className="block text-sm text-gray-700 mb-1">Loại Hợp Đồng</label><select className="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white cursor-pointer focus:outline-none focus:border-green-700" value={formData.employmentType} onChange={e => setFormData({ ...formData, employmentType: e.target.value })}><option value="fullTime">Toàn Thời Gian</option><option value="partTime">Bán Thời Gian</option><option value="contract">Hợp Đồng</option><option value="intern">Thực Tập</option></select></div>
                   <div><label className="block text-sm text-gray-700 mb-1">Trạng Thái</label><select className="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white cursor-pointer focus:outline-none focus:border-green-700" value={formData.employmentStatus} onChange={e => setFormData({ ...formData, employmentStatus: e.target.value })}><option value="probation">Thử Việc</option><option value="active">Đang Làm Việc</option><option value="terminated">Đã Nghỉ Việc</option></select></div>
+                  <div className="col-span-2 border-t border-gray-200 pt-3 mt-1"><p className="text-sm font-medium text-gray-700">Tài Khoản Đăng Nhập</p></div>
+                  <div><label className="block text-sm text-gray-700 mb-1">Mật Khẩu{editingEmployee ? ' (Bỏ Trống Nếu Không Đổi)' : <span className="text-red-500"> *</span>}</label><input className="w-full px-3 py-2 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:border-green-700" type="password" placeholder={editingEmployee ? 'Bỏ Trống Để Giữ Nguyên' : 'Tối Thiểu 6 Ký Tự'} value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} required={!editingEmployee} minLength={formData.password ? 6 : undefined} /></div>
+
                 </div>
               </div>
               <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200">
